@@ -27,7 +27,6 @@ spring:
     active: default
   datasource:
     url: ${DB_URL:jdbc:h2:mem:realtime_chat_db;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH}
-    driver-class-name: ${DB_DRIVER:org.h2.Driver}
     username: ${DB_USER:sa}
     password: ${DB_PASS:}
   jpa:
