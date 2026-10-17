@@ -4,6 +4,8 @@ A gamified, enterprise-grade real-time chat platform combining a **multi-client 
 
 ---
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-success?style=for-the-badge&logo=render)](https://real-time-chat-server-n8ml.onrender.com/)
+
 ## 🌟 Key Features
 
 ### 1. Dual-Protocol Communication Architecture
