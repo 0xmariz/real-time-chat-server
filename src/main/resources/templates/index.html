@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Arena — Real-Time TCP &amp; WebSocket Chat Server</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="/css/styles.css">
+    <!-- SockJS and STOMP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo">⚡</div>
+            <div class="brand-info">
+                <h1>NEXUS ARENA</h1>
+                <div class="brand-badges">
+                    <span class="status-badge tcp"><span class="status-pulse"></span> TCP: Port 8888</span>
+                    <span id="wsStatusBadge" class="status-badge ws"><span class="status-pulse"></span> WS: Connecting</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Gamified Profile & Action Bar -->
+        <div class="header-actions">
+            <button class="nav-btn primary" onclick="openCreateStoryModal()">📸 Post Story</button>
+            <button class="nav-btn" onclick="addBonusXp()">⚡ +50 XP</button>
+            <button class="nav-btn" onclick="openTcpGuideModal()">🖥️ TCP Guide</button>
+            <button class="nav-btn" onclick="openBackupModal()">💾 DB Backup</button>
+            <button class="nav-btn" onclick="logout()" title="Logout" style="color: #fca5a5; border-color: rgba(239,68,68,0.3);">⏻ Logout</button>
+
+            <!-- User Status Card -->
+            <div class="user-game-card" onclick="changeUsername()" title="Click to change your username" style="cursor: pointer;">
+                <div class="user-avatar-wrap">
+                    <img id="headerUserAvatar" class="user-avatar" src="" alt="Avatar">
+                    <span id="headerLevelBadge" class="user-level-badge">Lv.1</span>
+                </div>
+                <div class="user-game-info">
+                    <span id="headerUsername" class="user-game-name">Player</span>
+                    <div class="user-xp-bar-wrap">
+                        <div class="user-xp-bar">
+                            <div id="headerXpFill" class="user-xp-fill"></div>
+                        </div>
+                        <span id="headerXpText" class="user-xp-text">0 pts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 24-Hour Stories Bar (roadmap.sh/projects/stories-feature) -->
+    <section class="stories-container">
+        <div id="storiesBar" class="stories-bar">
+            <!-- Dynamic Stories Circles will be rendered here -->
+        </div>
+    </section>
+
+    <!-- Main 3-Column Arena Layout -->
+    <main class="arena-layout">
+
+        <!-- Column 1: Channels & Cache Telemetry -->
+        <aside class="glass-panel sidebar-panel">
+            <div class="panel-header">
+                <span class="panel-title">Channels</span>
+                <button class="nav-btn" style="padding: 3px 8px; font-size: 0.72rem;" onclick="promptCreateRoom()">+ Room</button>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="section-label">Public Arenas</div>
+                <ul class="channel-list" id="roomsChannelList">
+                    <li class="channel-item active" id="room-public" onclick="switchRoom('public')">
+                        <span class="channel-left">🌐 #public</span>
+                        <span class="panel-badge">Global</span>
+                    </li>
+                    <li class="channel-item" id="room-gaming" onclick="switchRoom('gaming')">
+                        <span class="channel-left">🎮 #gaming</span>
+                        <span class="panel-badge">Active</span>
+                    </li>
+                    <li class="channel-item" id="room-tech" onclick="switchRoom('tech')">
+                        <span class="channel-left">💻 #tech</span>
+                        <span class="panel-badge">Dev</span>
+                    </li>
+                </ul>
+            <!-- Server Resources & Load Telemetry -->
+            <div class="sidebar-section" style="border-top: 1px solid var(--border-glass);">
+                <div class="section-label">
+                    <span>🖥️ Server Resources &amp; Load</span>
+                    <span id="serverUptimeBadge" style="color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;">00h 00m</span>
+                </div>
+                <div class="cache-telemetry-box" style="margin: 4px 0 0 0; background: rgba(15, 23, 42, 0.9);">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-secondary);">
+                        <span>CPU Load: <strong id="sysCpuVal" style="color: var(--accent-cyan);">0.0%</strong></span>
+                        <span>Threads: <strong id="sysThreadsVal" style="color: var(--text-primary);">0</strong></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-secondary);">
+                        <span>RAM Heap: <strong id="sysRamVal" style="color: var(--accent-gold);">0 / 0 MB</strong></span>
+                        <span>TCP Conns: <strong id="sysTcpConnsVal" style="color: var(--accent-emerald);">0</strong></span>
+                    </div>
+                    <div style="font-size: 0.68rem; color: var(--text-muted); border-top: 1px solid var(--border-glass); padding-top: 6px;">
+                        Database: <strong id="sysDbStatus" style="color: var(--accent-emerald);">Healthy</strong>
+                        <div id="sysDbCounts" style="font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
+                            Users: 0 | Messages: 0 | Stories: 0
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- In-Memory Caching Server Telemetry (roadmap.sh/projects/caching-server) -->
+            <div class="sidebar-section" style="margin-top: auto; border-top: 1px solid var(--border-glass);">
+                <div class="section-label">
+                    <span>⚡ Caching Server Telemetry</span>
+                    <span id="leaderboardCacheBadge" style="color: var(--accent-emerald);">Hit: Active</span>
+                </div>
+                <div class="cache-telemetry-box">
+                    <div class="cache-header">
+                        <span>LRU / TTL Cache Engine</span>
+                        <span id="cacheRatioVal" style="font-family: 'JetBrains Mono', monospace;">0.0%</span>
+                    </div>
+                    <div class="cache-meter">
+                        <div class="cache-stat-pill">
+                            <span class="cache-stat-label">Cache HITS</span>
+                            <span id="cacheHitsVal" class="cache-stat-val">0</span>
+                        </div>
+                        <div class="cache-stat-pill">
+                            <span class="cache-stat-label">Cache MISSES</span>
+                            <span id="cacheMissesVal" class="cache-stat-val">0</span>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+                        Active Entries: <span id="cacheEntriesVal" style="color: var(--text-primary);">0 / 1000</span>
+                    </div>
+                    <button class="cache-btn-clear" onclick="clearCache()">Clear Cache (X-Cache Reset)</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Column 2: Real-Time Chat Arena -->
+        <section class="glass-panel chat-arena">
+            <div class="panel-header">
+                <span class="panel-title">
+                    <span>Live Chat Stream</span>
+                    <small style="color: var(--text-muted); font-weight: 400; font-size: 0.75rem;">(Synced with Raw TCP Clients)</small>
+                </span>
+                <span class="panel-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">● Real-Time Broadcast</span>
+            </div>
+
+            <!-- Messages Stream -->
+            <div id="chatMessages" class="chat-messages-container">
+                <div class="event-banner system">
+                    🚀 Server ready! Chatting awards +10 XP. Type /whisper &lt;user&gt; &lt;msg&gt; for private DMs.
+                </div>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <div class="chat-input-bar">
+                <input type="text" id="chatInput" placeholder="Type a message or command... (e.g. Hello arena!)" autocomplete="off">
+                <button class="chat-send-btn" onclick="sendMessage()" title="Send Message">➤</button>
+            </div>
+        </section>
+
+        <!-- Column 3: Real-Time Leaderboard & Podium (roadmap.sh/projects/realtime-leaderboard-system) -->
+        <aside class="glass-panel leaderboard-arena">
+            <div class="panel-header">
+                <span class="panel-title">🏆 Leaderboard</span>
+                <span class="panel-badge" style="color: var(--accent-gold);">Top Players</span>
+            </div>
+
+            <!-- Top 3 Podium -->
+            <div class="podium-container">
+                <!-- 2nd Place -->
+                <div class="podium-seat second">
+                    <div class="podium-avatar-wrap">
+                        <img id="podium2Avatar" class="podium-avatar" src="" alt="">
+                    </div>
+                    <span id="podium2Name" class="podium-name">Player 2</span>
+                    <span id="podium2Score" class="podium-score">0 pts</span>
+                    <div class="podium-pedestal">2</div>
+                </div>
+
+                <!-- 1st Place -->
+                <div class="podium-seat first">
+                    <div class="podium-avatar-wrap">
+                        <span class="podium-crown">👑</span>
+                        <img id="podium1Avatar" class="podium-avatar" src="" alt="">
+                    </div>
+                    <span id="podium1Name" class="podium-name">Champion</span>
+                    <span id="podium1Score" class="podium-score">0 pts</span>
+                    <div class="podium-pedestal">1</div>
+                </div>
+
+                <!-- 3rd Place -->
+                <div class="podium-seat third">
+                    <div class="podium-avatar-wrap">
+                        <img id="podium3Avatar" class="podium-avatar" src="" alt="">
+                    </div>
+                    <span id="podium3Name" class="podium-name">Player 3</span>
+                    <span id="podium3Score" class="podium-score">0 pts</span>
+                    <div class="podium-pedestal">3</div>
+                </div>
+            </div>
+
+            <!-- Leaderboard List (#4 - #10) -->
+            <div class="leaderboard-list" id="leaderboardList">
+                <!-- Dynamically rendered -->
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Modal: Create 24h Story -->
+    <div id="createStoryModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">📸 Create 24-Hour Story</span>
+                <button class="modal-close" onclick="closeCreateStoryModal()">&times;</button>
+            </div>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">
+                Stories expire automatically in 24 hours. Posting awards <strong>+50 XP</strong>!
+            </p>
+            <input type="text" id="storyCaptionInput" class="chat-input-bar" style="border-radius: 8px; width:100%" placeholder="Story caption / shoutout...">
+            <input type="text" id="storyMediaInput" class="chat-input-bar" style="border-radius: 8px; width:100%" placeholder="Image URL (optional, leave blank for cool preset)...">
+            <button class="nav-btn primary" style="width: 100%; justify-content: center; padding: 12px;" onclick="submitNewStory()">Publish Story (+50 XP)</button>
+        </div>
+    </div>
+
+    <!-- Modal: Instagram-style Story Viewer -->
+    <div id="storyViewerModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 440px; padding: 0; overflow: hidden; background: #000; position: relative; height: 580px;">
+            <!-- Progress Bar -->
+            <div style="position: absolute; top: 8px; left: 12px; right: 12px; height: 3px; background: rgba(255,255,255,0.2); border-radius: 4px; z-index: 10;">
+                <div id="viewerProgressBar" style="height: 100%; background: #fff; width: 0%;"></div>
+            </div>
+
+            <!-- Viewer Header -->
+            <div style="position: absolute; top: 20px; left: 16px; right: 16px; display: flex; align-items: center; justify-content: space-between; z-index: 10;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <img id="viewerAvatar" src="" style="width: 34px; height: 34px; border-radius: 50%; border: 1px solid #fff;" alt="">
+                    <span id="viewerAuthor" style="font-weight: 700; color: #fff; font-size: 0.9rem;">Author</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="viewerViewCount" style="color: rgba(255,255,255,0.8); font-size: 0.75rem;">👁️ 0 views</span>
+                    <button class="modal-close" style="color: #fff;" onclick="closeStoryViewer()">&times;</button>
+                </div>
+            </div>
+
+            <!-- Image Canvas -->
+            <img id="viewerImage" src="" style="width: 100%; height: 100%; object-fit: cover;" alt="Story">
+
+            <!-- Caption Overlay -->
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 18px; background: linear-gradient(transparent, rgba(0,0,0,0.85));">
+                <p id="viewerCaption" style="color: #fff; font-size: 0.95rem; font-weight: 500;"></p>
+            </div>
+
+            <!-- Nav Click Zones -->
+            <div onclick="prevStory()" style="position: absolute; top: 0; left: 0; width: 40%; height: 80%; cursor: pointer;"></div>
+            <div onclick="nextStory()" style="position: absolute; top: 0; right: 0; width: 40%; height: 80%; cursor: pointer;"></div>
+        </div>
+    </div>
+
+    <!-- Modal: TCP Terminal Connection Guide -->
+    <div id="tcpGuideModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <span class="modal-title">🖥️ Raw TCP Chat Server Guide</span>
+                <button class="modal-close" onclick="closeTcpGuideModal()">&times;</button>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                Your server runs a true multi-client TCP socket server on port <strong>8888</strong>. Connect from any terminal!
+            </p>
+            <div class="terminal-block">
+# 1. Connect via Netcat or Telnet:
+nc localhost 8888
+# OR
+telnet localhost 8888
+
+# 2. Or connect via PowerShell:
+$client = New-Object System.Net.Sockets.TcpClient("localhost", 8888)
+$stream = $client.GetStream()
+$writer = New-Object System.IO.StreamWriter($stream)
+$reader = New-Object System.IO.StreamReader($stream)
+$writer.WriteLine("/nick TerminalUser")
+$writer.Flush()
+$reader.ReadLine()
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                <strong>Supported TCP Commands:</strong><br>
+                <code>/nick &lt;name&gt;</code> &bull; <code>/msg &lt;text&gt;</code> &bull; <code>/join &lt;room&gt;</code> &bull; <code>/whisper &lt;user&gt; &lt;text&gt;</code> &bull; <code>/leaderboard</code> &bull; <code>/stories</code> &bull; <code>/stats</code> &bull; <code>/quit</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Database Backup Utility (roadmap.sh/projects/database-backup-utility) -->
+    <div id="backupModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <span class="modal-title">💾 Database Backup &amp; Recovery Utility</span>
+                <button class="modal-close" onclick="closeBackupModal()">&times;</button>
+            </div>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">
+                Creates compressed GZIP JSON snapshots of all tables (users, messages, stories) with automated rotation.
+            </p>
+            <button class="nav-btn primary" style="width: 100%; justify-content: center;" onclick="triggerInstantBackup()">⚡ Create Instant Backup Snapshot</button>
+            <div class="section-label" style="margin-top: 10px;">Available Snapshots:</div>
+            <div id="backupsList" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                <!-- Dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+</html>

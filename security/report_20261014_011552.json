@@ -1,0 +1,626 @@
+{
+  "meta": {
+    "timestamp": "20261014_011552",
+    "target_http": "http://localhost:8090",
+    "target_tcp": "localhost:8888",
+    "tool": "Nexus Arena Security Test Suite v1.0"
+  },
+  "suites": {
+    "01 \u00b7 Brute Force & Credential Attacks": {
+      "total": 1,
+      "vulnerable": 0,
+      "findings": [
+        {
+          "test": "Module load failed: 01_bruteforce.py",
+          "vulnerable": false,
+          "detail": "cannot unpack non-iterable type object"
+        }
+      ]
+    },
+    "02 \u00b7 SQL Injection": {
+      "total": 0,
+      "vulnerable": 0,
+      "findings": []
+    },
+    "03 \u00b7 Cross-Site Scripting (XSS)": {
+      "total": 0,
+      "vulnerable": 0,
+      "findings": []
+    },
+    "04 \u00b7 Auth Bypass & Privilege Escalation": {
+      "total": 24,
+      "vulnerable": 11,
+      "findings": [
+        {
+          "test": "H2 console at /h2-console",
+          "vulnerable": true,
+          "detail": "HTTP 200 - H2 login page EXPOSED"
+        },
+        {
+          "test": "H2 console at /h2-console/",
+          "vulnerable": true,
+          "detail": "HTTP 200 - H2 login page EXPOSED"
+        },
+        {
+          "test": "H2 console at /h2-console/login.jsp",
+          "vulnerable": true,
+          "detail": "HTTP 200 - H2 login page EXPOSED"
+        },
+        {
+          "test": "H2 console at /console",
+          "vulnerable": false,
+          "detail": "HTTP 404 - not accessible"
+        },
+        {
+          "test": "H2 console at /actuator/h2-console",
+          "vulnerable": false,
+          "detail": "HTTP 404 - not accessible"
+        },
+        {
+          "test": "GET /api/leaderboard without auth",
+          "vulnerable": true,
+          "detail": "HTTP 404 - accessible without auth!"
+        },
+        {
+          "test": "GET /api/chat/history/public without auth",
+          "vulnerable": true,
+          "detail": "HTTP 200 - accessible without auth!"
+        },
+        {
+          "test": "GET /api/stories without auth",
+          "vulnerable": true,
+          "detail": "HTTP 405 - accessible without auth!"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus without auth",
+          "vulnerable": true,
+          "detail": "HTTP 200 - accessible without auth!"
+        },
+        {
+          "test": "POST /api/chat/send without auth",
+          "vulnerable": true,
+          "detail": "HTTP 404 - accessible without auth!"
+        },
+        {
+          "test": "Guest awarding self 99999 XP via /api/leaderboard/bonus",
+          "vulnerable": true,
+          "detail": "HTTP 200 - XP awarded with NO auth check!"
+        },
+        {
+          "test": "Guest creating a story (should require auth)",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "REST chat: spoofed sender field",
+          "vulnerable": false,
+          "detail": "HTTP 404 - blocked"
+        },
+        {
+          "test": "Register with extra field: role",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected in response: False"
+        },
+        {
+          "test": "Register with extra field: isAdmin",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected in response: False"
+        },
+        {
+          "test": "Register with extra field: score",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected in response: False"
+        },
+        {
+          "test": "Register with extra field: guest",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected in response: True"
+        },
+        {
+          "test": "Forged Bearer token on GET /api/leaderboard/bonus",
+          "vulnerable": false,
+          "detail": "HTTP 405 - rejected"
+        },
+        {
+          "test": "Forged Bearer token on GET /api/stories",
+          "vulnerable": false,
+          "detail": "HTTP 405 - rejected"
+        },
+        {
+          "test": "Forged Bearer token on GET /api/chat/history/public",
+          "vulnerable": true,
+          "detail": "HTTP 200 - accepted fake JWT!"
+        },
+        {
+          "test": "Password change at /api/auth/change-password without old-password auth",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Password change at /api/auth/update without old-password auth",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Password change at /api/user/update without old-password auth",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Password change at /api/profile/update without old-password auth",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        }
+      ]
+    },
+    "05 \u00b7 Rate Limiting & DoS Resistance": {
+      "total": 8,
+      "vulnerable": 3,
+      "findings": [
+        {
+          "test": "Login flood: 50 concurrent requests",
+          "vulnerable": true,
+          "detail": "OK/401=50  429=0  err=0  time=0.16s"
+        },
+        {
+          "test": "Register flood: 30 concurrent registrations",
+          "vulnerable": false,
+          "detail": "Created=0  Blocked(429)=0  time=0.08s"
+        },
+        {
+          "test": "Chat flood: 40 concurrent messages",
+          "vulnerable": false,
+          "detail": "Accepted=0/40  time=0.13s"
+        },
+        {
+          "test": "Story flood: 20 stories created",
+          "vulnerable": true,
+          "detail": "Accepted=16/20"
+        },
+        {
+          "test": "Oversized payload (100KB) accepted",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Oversized payload (500KB) accepted",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Oversized payload (1000KB) accepted",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Connection exhaustion: opened 100 slow connections",
+          "vulnerable": true,
+          "detail": "Server accepted 100 incomplete HTTP requests"
+        }
+      ]
+    },
+    "06 \u00b7 Mass Assignment & XP Manipulation": {
+      "total": 20,
+      "vulnerable": 8,
+      "findings": [
+        {
+          "test": "POST /api/leaderboard/bonus points=999999",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=-999999",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=0",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=9999999999",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=2147483647",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=2147483648",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=1.5",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "Register PrivUser1 with fields: ['score', 'level', 'isAdmin']",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected fields reflected: False"
+        },
+        {
+          "test": "Register PrivUser2 with fields: ['role', 'permissions']",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected fields reflected: False"
+        },
+        {
+          "test": "Register PrivUser3 with fields: ['rank', 'badge']",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected fields reflected: False"
+        },
+        {
+          "test": "Register PrivUser4 with fields: ['xp', 'prestige']",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected fields reflected: False"
+        },
+        {
+          "test": "Direct score update at POST /api/user/update",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Direct score update at POST /api/leaderboard/update",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Direct score update at POST /api/profile/score",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "PUT /api/user/TestUser123 score=999999",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "PUT /api/leaderboard/TestUser123 score=999999",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Story creation with injected fields: ['id', 'viewCount']",
+          "vulnerable": true,
+          "detail": "HTTP 200 - fields reflected: True"
+        },
+        {
+          "test": "Story creation with injected fields: ['createdAt', 'expiresAt']",
+          "vulnerable": false,
+          "detail": "HTTP 200 - fields reflected: False"
+        },
+        {
+          "test": "Story creation with injected fields: ['hidden', 'featured']",
+          "vulnerable": false,
+          "detail": "HTTP 200 - fields reflected: False"
+        },
+        {
+          "test": "XP overflow check",
+          "vulnerable": false,
+          "detail": "'str' object has no attribute 'get'"
+        }
+      ]
+    },
+    "07 \u00b7 IDOR (Insecure Direct Object Ref)": {
+      "total": 13,
+      "vulnerable": 1,
+      "findings": [
+        {
+          "test": "User B views User A story by ID (GET /api/stories/46)",
+          "vulnerable": false,
+          "detail": "HTTP 404 - content exposed: 103 bytes"
+        },
+        {
+          "test": "Story ID enumeration (IDs 1-19): 0 accessible",
+          "vulnerable": false,
+          "detail": "0 stories retrievable by guessing sequential IDs"
+        },
+        {
+          "test": "Story view IDOR",
+          "vulnerable": false,
+          "detail": "No stories available to test"
+        },
+        {
+          "test": "DELETE /api/stories/47 as non-owner",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "DELETE /api/stories/47/delete as non-owner",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "GET /api/leaderboard/user/1 (unauthenticated user data access)",
+          "vulnerable": false,
+          "detail": "HTTP 404 - 0 bytes"
+        },
+        {
+          "test": "GET /api/user/1 (unauthenticated user data access)",
+          "vulnerable": false,
+          "detail": "HTTP 404 - 99 bytes"
+        },
+        {
+          "test": "GET /api/user/TestUser123 (unauthenticated user data access)",
+          "vulnerable": false,
+          "detail": "HTTP 404 - 109 bytes"
+        },
+        {
+          "test": "GET /api/leaderboard/user/TestUser123 (unauthenticated user data access)",
+          "vulnerable": true,
+          "detail": "HTTP 200 - 268 bytes"
+        },
+        {
+          "test": "GET /api/messages/private/TestUser123 (unauthenticated DM access)",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "GET /api/chat/private/TestUser123 (unauthenticated DM access)",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "GET /api/messages/1 (unauthenticated DM access)",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "GET /api/chat/dm/TestUser123 (unauthenticated DM access)",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        }
+      ]
+    },
+    "08 \u00b7 TCP Server Abuse": {
+      "total": 29,
+      "vulnerable": 7,
+      "findings": [
+        {
+          "test": "TCP flood: opened 50/50 connections",
+          "vulnerable": true,
+          "detail": "Connected=50  Failed=0"
+        },
+        {
+          "test": "Malformed TCP cmd: '/nick'",
+          "vulnerable": false,
+          "detail": "Handled: '[Server] Usage: /nick <username>'"
+        },
+        {
+          "test": "Malformed TCP cmd: '/nick   '",
+          "vulnerable": false,
+          "detail": "Handled: '[Server] Usage: /nick <username>'"
+        },
+        {
+          "test": "Malformed TCP cmd: '/join'",
+          "vulnerable": false,
+          "detail": "Handled: '[Server] Please set your nickname first with /nick <name>'"
+        },
+        {
+          "test": "Malformed TCP cmd: '/whisper'",
+          "vulnerable": false,
+          "detail": "Handled: '[Server] Please set your nickname first with /nick <name>'"
+        },
+        {
+          "test": "Malformed TCP cmd: '/whisper noargs'",
+          "vulnerable": false,
+          "detail": "Handled: '[Server] Please set your nickname first with /nick <name>'"
+        },
+        {
+          "test": "Malformed TCP cmd: '////invalid'",
+          "vulnerable": false,
+          "detail": "Handled: '[Server] Unknown command: ////invalid. Type /help for assist'"
+        },
+        {
+          "test": "Malformed TCP cmd: '/nick AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'",
+          "vulnerable": true,
+          "detail": "No response (possible crash)"
+        },
+        {
+          "test": "Malformed TCP cmd: '/msg BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB'",
+          "vulnerable": true,
+          "detail": "No response (possible crash)"
+        },
+        {
+          "test": "TCP malformed commands",
+          "vulnerable": true,
+          "detail": "Connection failed mid-test: [WinError 10053] An established connection was aborted by the software in your host machine"
+        },
+        {
+          "test": "TCP /nick injection: \"/nick <script>alert('xss')</script>\"",
+          "vulnerable": false,
+          "detail": "Response: \"[Server] Welcome, <script>alert('xss')</script>! You are connected to room #publ\""
+        },
+        {
+          "test": "TCP /nick injection: '/nick admin'",
+          "vulnerable": true,
+          "detail": "Response: '[Server] Welcome, admin! You are connected to room #public'"
+        },
+        {
+          "test": "TCP /nick injection: \"/nick ' OR 1=1 --\"",
+          "vulnerable": false,
+          "detail": "Response: \"[Server] Welcome, '! You are connected to room #public\""
+        },
+        {
+          "test": "TCP /nick injection: '/nick ../../../etc/passwd'",
+          "vulnerable": false,
+          "detail": "Response: '[Server] Welcome, ../../../etc/passwd! You are connected to room #public'"
+        },
+        {
+          "test": "TCP /nick injection: '/nick \"; cat /etc/passwd #'",
+          "vulnerable": false,
+          "detail": "Response: '[Server] Welcome, \";! You are connected to room #public'"
+        },
+        {
+          "test": "TCP /nick injection: '/nick '",
+          "vulnerable": false,
+          "detail": "Response: '[Server] Usage: /nick <username>'"
+        },
+        {
+          "test": "TCP /nick injection: '/nick {{7*7}}'",
+          "vulnerable": false,
+          "detail": "Response: '[Server] Welcome, {{7*7}}! You are connected to room #public'"
+        },
+        {
+          "test": "Command without nick: '/msg hello world'",
+          "vulnerable": false,
+          "detail": "Response: '[Server] Please set your nickname first with /nick <name>'"
+        },
+        {
+          "test": "Command without nick: '/join public'",
+          "vulnerable": false,
+          "detail": "Response: '[Server] Please set your nickname first with /nick <name>'"
+        },
+        {
+          "test": "Command without nick: '/leaderboard'",
+          "vulnerable": true,
+          "detail": "Response: '----------------------------------------------------------\\r\\n ? REAL-TIME LEADERB'"
+        },
+        {
+          "test": "Command without nick: '/stories'",
+          "vulnerable": true,
+          "detail": "Response: '----------------------------------------------------------\\r\\n ? ACTIVE STORIES (2'"
+        },
+        {
+          "test": "Command without nick: '/stats'",
+          "vulnerable": false,
+          "detail": "Response: '[Server] Please set username first with /nick <name>'"
+        },
+        {
+          "test": "Binary payload (100 bytes): b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'",
+          "vulnerable": false,
+          "detail": "Response: b'========================================'"
+        },
+        {
+          "test": "Binary payload (100 bytes): b'\\xff\\xfe\\xff\\xfe\\xff\\xfe\\xff\\xfe\\xff\\xfe\\xff\\xfe\\xff\\xfe\\xff\\xfe\\xff\\xfe\\xff\\xfe'",
+          "vulnerable": false,
+          "detail": "Response: b'========================================'"
+        },
+        {
+          "test": "Binary payload (12 bytes): b'HELLO\\x00WORLD\\n'",
+          "vulnerable": false,
+          "detail": "Response: b'========================================'"
+        },
+        {
+          "test": "Binary payload (40 bytes): b'\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n'",
+          "vulnerable": false,
+          "detail": "Response: b'========================================'"
+        },
+        {
+          "test": "Binary payload (256 bytes): b'\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t\\n\\x0b\\x0c\\r\\x0e\\x0f\\x10\\x11\\x12\\x13'",
+          "vulnerable": false,
+          "detail": "Response: b'========================================'"
+        },
+        {
+          "test": "Whisper to non-existent user",
+          "vulnerable": false,
+          "detail": "Response: '[Whisper to NonExistentUser9999]: hello secret message\\r\\n[Server] Note: NonExiste'"
+        },
+        {
+          "test": "Duplicate /nick race condition: 1/5 connections claimed 'SameNick'",
+          "vulnerable": false,
+          "detail": "More than 1 user with same nick is a collision vulnerability"
+        }
+      ]
+    },
+    "09 \u00b7 WebSocket & STOMP Security": {
+      "total": 17,
+      "vulnerable": 7,
+      "findings": [
+        {
+          "test": "WebSocket unauthenticated connect",
+          "vulnerable": false,
+          "detail": "Connection refused: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "STOMP sender spoof",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Private queue snoop TestUser123",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Private queue snoop CyberNinja",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Private queue snoop admin",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Private queue snoop Mariappan",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "WS content injection",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Topic hijack /topic/public",
+          "vulnerable": false,
+          "detail": "Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Topic hijack /topic/leaderboard",
+          "vulnerable": false,
+          "detail": "Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        },
+        {
+          "test": "Topic hijack /topic/system",
+          "vulnerable": false,
+          "detail": "Handshake status 400 None -+-+- {'vary': 'Access-Control-Request-Headers', 'content-length': '0', 'date': 'Tue, 13 Oct 2026 19:46:26 GMT', 'connection': 'close'} -+-+- None"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 112,
+    "total_vulnerable": 37
+  }
+}

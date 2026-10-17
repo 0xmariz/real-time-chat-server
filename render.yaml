@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: nexus-chat-server
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: PORT
+        value: 8090
+      - key: H2_CONSOLE_ENABLED
+        value: "false"

@@ -1,0 +1,51 @@
+server:
+  port: ${PORT:8090}
+
+tcp:
+  server:
+    port: ${TCP_PORT:8888}
+    enabled: ${TCP_ENABLED:true}
+
+gamification:
+  xp-per-message: 10
+  xp-per-story: 50
+  level-threshold-multiplier: 100
+
+cache:
+  ttl-seconds: 60
+  max-entries: 1000
+
+backup:
+  directory: ./backups
+  auto-interval-ms: 3600000
+  enabled: true
+
+spring:
+  application:
+    name: realtime-chat-server
+  profiles:
+    active: default
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:realtime_chat_db;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+    username: ${DB_USER:sa}
+    password: ${DB_PASS:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:false}
+      path: /h2-console
+      settings:
+        web-allow-others: false
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
