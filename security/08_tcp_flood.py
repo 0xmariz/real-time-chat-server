@@ -1,11 +1,16 @@
-﻿import socket
+import socket
 import time
 import threading
 from colorama import Fore, Style, init
 
 init(autoreset=True)
-TCP_HOST = "127.0.0.1"
-TCP_PORT = 8888
+try:
+    from config import TARGET_TCP_HOST, TARGET_TCP_PORT
+except ImportError:
+    from .config import TARGET_TCP_HOST, TARGET_TCP_PORT
+
+TCP_HOST = TARGET_TCP_HOST
+TCP_PORT = TARGET_TCP_PORT
 RESULTS = []
 lock = threading.Lock()
 
@@ -20,6 +25,16 @@ def log(label, vuln, detail):
 
 def section(title):
     print(f"\n{'='*60}\n  {title}\n{'='*60}")
+
+def is_tcp_available():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(2)
+        s.connect((TCP_HOST, TCP_PORT))
+        s.close()
+        return True
+    except Exception:
+        return False
 
 def tcp_connect(timeout=5):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -205,7 +220,15 @@ def test_nick_race():
 def run():
     print("\n" + "#"*60)
     print("  08 . TCP SERVER ABUSE AND COMMAND INJECTION")
+    print(f"  Target: {TCP_HOST}:{TCP_PORT}")
     print("#"*60)
+    if not is_tcp_available():
+        print(f"  [INFO] TCP port {TCP_PORT} on {TCP_HOST} is not open or not publicly routed.")
+        print("         (Render free web tier routes HTTP/WSS traffic on port 443; raw TCP is internal/local).")
+        log("TCP Server reachability on public host", False,
+            f"Port {TCP_PORT} not open or routed on {TCP_HOST} (expected on web-only cloud platforms)")
+        return RESULTS
+
     test_tcp_flood()
     test_malformed_commands()
     test_nick_injection()

@@ -1,0 +1,584 @@
+{
+  "meta": {
+    "timestamp": "20261018_143333",
+    "generated_at": "2026-10-18T14:54:17+05:30",
+    "target_http": "https://real-time-chat-server-n8ml.onrender.com",
+    "target_tcp": "real-time-chat-server-n8ml.onrender.com:8888",
+    "tool": "Nexus Arena Security Test Suite v1.0"
+  },
+  "suites": {
+    "01 · Brute Force & Credential Attacks": {
+      "total": 1,
+      "vulnerable": 0,
+      "errors": 1,
+      "findings": [
+        {
+          "test": "Module load/run failed: 01_bruteforce.py",
+          "vulnerable": false,
+          "detail": "TypeError: cannot unpack non-iterable type object",
+          "status": "error"
+        }
+      ]
+    },
+    "02 · SQL Injection": {
+      "total": 1,
+      "vulnerable": 0,
+      "errors": 1,
+      "findings": [
+        {
+          "test": "Module load/run failed: 02_sqli.py",
+          "vulnerable": false,
+          "detail": "ConnectionError: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+          "status": "error"
+        }
+      ]
+    },
+    "03 · Cross-Site Scripting (XSS)": {
+      "total": 1,
+      "vulnerable": 0,
+      "errors": 1,
+      "findings": [
+        {
+          "test": "Module load/run failed: 03_xss.py",
+          "vulnerable": false,
+          "detail": "ConnectionError: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))",
+          "status": "error"
+        }
+      ]
+    },
+    "04 · Auth Bypass & Privilege Escalation": {
+      "total": 23,
+      "vulnerable": 0,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "H2 console at /h2-console",
+          "vulnerable": false,
+          "detail": "Connection error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /h2-console (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "H2 console at /h2-console/",
+          "vulnerable": false,
+          "detail": "Connection error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /h2-console/ (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "H2 console at /h2-console/login.jsp",
+          "vulnerable": false,
+          "detail": "Connection error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /h2-console/login.jsp (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "H2 console at /console",
+          "vulnerable": false,
+          "detail": "Connection error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /console (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "H2 console at /actuator/h2-console",
+          "vulnerable": false,
+          "detail": "Connection error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /actuator/h2-console (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/leaderboard",
+          "vulnerable": false,
+          "detail": "Error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/chat/history/public",
+          "vulnerable": false,
+          "detail": "Error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/chat/history/public (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/stories",
+          "vulnerable": false,
+          "detail": "Error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus",
+          "vulnerable": false,
+          "detail": "Error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "POST /api/chat/send",
+          "vulnerable": false,
+          "detail": "Error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Guest login setup",
+          "vulnerable": false,
+          "detail": "Could not create guest - skipping"
+        },
+        {
+          "test": "Sender spoofing REST",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Register mass assign",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Register mass assign",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Register mass assign",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Register mass assign",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Forged token /api/leaderboard/bonus",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Forged token /api/stories",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Forged token /api/chat/history/public",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/chat/history/public (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Account takeover /api/auth/change-password",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/change-password (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Account takeover /api/auth/update",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/update (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Account takeover /api/user/update",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/user/update (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Account takeover /api/profile/update",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/profile/update (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        }
+      ]
+    },
+    "05 · Rate Limiting & DoS Resistance": {
+      "total": 8,
+      "vulnerable": 0,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "Login flood: 50 concurrent requests",
+          "vulnerable": false,
+          "detail": "OK/401=0  429=0  err=50  time=4.19s"
+        },
+        {
+          "test": "Register flood: 30 concurrent registrations",
+          "vulnerable": false,
+          "detail": "Created=0  Blocked(429)=0  time=4.14s"
+        },
+        {
+          "test": "Chat flood: 40 concurrent messages",
+          "vulnerable": false,
+          "detail": "Accepted=0/40  time=4.15s"
+        },
+        {
+          "test": "Story flood: 20 stories created",
+          "vulnerable": false,
+          "detail": "Accepted=0/20"
+        },
+        {
+          "test": "Oversized payload (100KB)",
+          "vulnerable": false,
+          "detail": "Rejected/error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Oversized payload (500KB)",
+          "vulnerable": false,
+          "detail": "Rejected/error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Oversized payload (1000KB)",
+          "vulnerable": false,
+          "detail": "Rejected/error: HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Connection exhaustion: opened 0 slow connections",
+          "vulnerable": false,
+          "detail": "Server accepted 0 incomplete HTTP requests"
+        }
+      ]
+    },
+    "06 · Mass Assignment & XP Manipulation": {
+      "total": 20,
+      "vulnerable": 0,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "XP inflation points=999999",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "XP inflation points=-999999",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "XP inflation points=0",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "XP inflation points=9999999999",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "XP inflation points=2147483647",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "XP inflation points=2147483648",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "XP inflation points=1.5",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Register privilege injection",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Register privilege injection",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Register privilege injection",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Register privilege injection",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Score update /api/user/update",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/user/update (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Score update /api/leaderboard/update",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/update (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Score update /api/profile/score",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/profile/score (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "PUT score update /api/user/TestUser123",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/user/TestUser123 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "PUT score update /api/leaderboard/TestUser123",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/TestUser123 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Story metadata injection",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Story metadata injection",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Story metadata injection",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "XP overflow check",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        }
+      ]
+    },
+    "07 · IDOR (Insecure Direct Object Ref)": {
+      "total": 12,
+      "vulnerable": 0,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "Story creation for IDOR test",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "Story view IDOR",
+          "vulnerable": false,
+          "detail": "No stories available to test"
+        },
+        {
+          "test": "DELETE /api/stories/1",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/stories/1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "DELETE /api/stories/1/delete",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/stories/1/delete (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/leaderboard/user/1",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/user/1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/user/1",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/user/1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/user/TestUser123",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/user/TestUser123 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/leaderboard/user/TestUser123",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/leaderboard/user/TestUser123 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/messages/private/TestUser123",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/messages/private/TestUser123 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/chat/private/TestUser123",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/chat/private/TestUser123 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/messages/1",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/messages/1 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        },
+        {
+          "test": "GET /api/chat/dm/TestUser123",
+          "vulnerable": false,
+          "detail": "HTTPConnectionPool(host='localhost', port=8090): Max retries exceeded with url: /api/chat/dm/TestUser123 (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+        }
+      ]
+    },
+    "08 · TCP Server Abuse": {
+      "total": 17,
+      "vulnerable": 1,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "TCP flood: opened 0/50 connections",
+          "vulnerable": false,
+          "detail": "Connected=0  Failed=50"
+        },
+        {
+          "test": "TCP malformed commands",
+          "vulnerable": true,
+          "detail": "Connection failed mid-test: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "TCP /nick \"/nick <script>alert('xss')</sc\"",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "TCP /nick '/nick admin'",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "TCP /nick \"/nick ' OR 1=1 --\"",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "TCP /nick '/nick ../../../etc/passwd'",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "TCP /nick '/nick \"; cat /etc/passwd #'",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "TCP /nick '/nick '",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "TCP /nick '/nick {{7*7}}'",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "TCP commands without nick",
+          "vulnerable": false,
+          "detail": "[WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Binary payload b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Binary payload b'\\xff\\xfe\\xff\\xfe\\xff\\xfe\\xff\\xfe\\xff\\xfe'",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Binary payload b'HELLO\\x00WORL'",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Binary payload b'\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n'",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Binary payload b'\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\t'",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Whisper non-existent user",
+          "vulnerable": false,
+          "detail": "[WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Duplicate /nick race condition: 0/5 connections claimed 'SameNick'",
+          "vulnerable": false,
+          "detail": "More than 1 user with same nick is a collision vulnerability"
+        }
+      ]
+    },
+    "09 · WebSocket & STOMP Security": {
+      "total": 17,
+      "vulnerable": 7,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "WebSocket unauthenticated connect",
+          "vulnerable": false,
+          "detail": "Connection refused: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "STOMP sender spoof",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Private queue snoop TestUser123",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Private queue snoop CyberNinja",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Private queue snoop admin",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Private queue snoop Mariappan",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "WS content injection",
+          "vulnerable": false,
+          "detail": "Error: [WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Topic hijack /topic/public",
+          "vulnerable": false,
+          "detail": "[WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Topic hijack /topic/leaderboard",
+          "vulnerable": false,
+          "detail": "[WinError 10061] No connection could be made because the target machine actively refused it"
+        },
+        {
+          "test": "Topic hijack /topic/system",
+          "vulnerable": false,
+          "detail": "[WinError 10061] No connection could be made because the target machine actively refused it"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 100,
+    "total_vulnerable": 8,
+    "total_passed": 89,
+    "total_errors": 3,
+    "risk_level": "HIGH RISK"
+  }
+}

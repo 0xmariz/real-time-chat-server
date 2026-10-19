@@ -1,0 +1,691 @@
+{
+  "meta": {
+    "timestamp": "20261018_150459",
+    "generated_at": "2026-10-18T15:07:45+05:30",
+    "target_http": "https://real-time-chat-server-n8ml.onrender.com",
+    "target_tcp": "127.0.0.1:8888",
+    "tool": "Nexus Arena Security Test Suite v1.0"
+  },
+  "suites": {
+    "01 · Brute Force & Credential Attacks": {
+      "total": 4,
+      "vulnerable": 1,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "Common dictionary password spray against 'CyberNinja'",
+          "vulnerable": false,
+          "detail": "No weak password accepted"
+        },
+        {
+          "test": "Account lockout / rate limiting on failed logins",
+          "vulnerable": true,
+          "detail": "No lockout after 25 failed attempts"
+        },
+        {
+          "test": "Timing oracle on login username validation",
+          "vulnerable": false,
+          "detail": "Timing difference: 18.3ms"
+        },
+        {
+          "test": "Username enumeration via /api/auth/register",
+          "vulnerable": false,
+          "detail": "Existing user: 'Account created! Welcome, Cybe' vs New user: 'Username must be 3-32 characte'"
+        }
+      ]
+    },
+    "02 · SQL Injection": {
+      "total": 20,
+      "vulnerable": 0,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "Login SQLi: SQLi Tautology: ' OR '1'='1",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Tautology with comment: ' OR '1'='1'--",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Numeric tautology: ' OR 1=1--",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Comment bypass: admin'--",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi String tautology: ' OR 'x'='x",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Double-quote tautology: \" OR \"1\"=\"1",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi UNION SELECT 1",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi UNION SELECT null",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Stacked query: DROP TABLE",
+          "vulnerable": false,
+          "detail": "HTTP 403 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Blind boolean true: ' AND 1=1--",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Blind boolean false: ' AND 1=2--",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Error-based",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Tautology: ' OR '1'='1",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Tautology with comment: ' OR '1'='1'--",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Numeric tautology: ' OR 1=1--",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Login SQLi: SQLi Comment bypass: admin'--",
+          "vulnerable": false,
+          "detail": "HTTP 401 blocked"
+        },
+        {
+          "test": "Register SQLi: SQLi Tautology: ' OR '1'='1",
+          "vulnerable": false,
+          "detail": "HTTP 200 handled gracefully"
+        },
+        {
+          "test": "Register SQLi: SQLi Tautology with comment: ' OR '1'='1'--",
+          "vulnerable": false,
+          "detail": "HTTP 200 handled gracefully"
+        },
+        {
+          "test": "Register SQLi: SQLi Numeric tautology: ' OR 1=1--",
+          "vulnerable": false,
+          "detail": "HTTP 200 handled gracefully"
+        },
+        {
+          "test": "Register SQLi: SQLi Comment bypass: admin'--",
+          "vulnerable": false,
+          "detail": "HTTP 200 handled gracefully"
+        }
+      ]
+    },
+    "03 · Cross-Site Scripting (XSS)": {
+      "total": 15,
+      "vulnerable": 10,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "Stored XSS in story: Basic script tag",
+          "vulnerable": true,
+          "detail": "Raw script stored unescaped in DB"
+        },
+        {
+          "test": "Stored XSS in story: Cookie steal script",
+          "vulnerable": true,
+          "detail": "Raw script stored unescaped in DB"
+        },
+        {
+          "test": "Stored XSS in story: Image onerror handler",
+          "vulnerable": true,
+          "detail": "Raw script stored unescaped in DB"
+        },
+        {
+          "test": "Stored XSS in story: SVG onload handler",
+          "vulnerable": true,
+          "detail": "Raw script stored unescaped in DB"
+        },
+        {
+          "test": "Stored XSS in story: Javascript: URI link",
+          "vulnerable": false,
+          "detail": "HTTP 200 stored/sanitized"
+        },
+        {
+          "test": "Stored XSS in story: HTML5 details ontoggle",
+          "vulnerable": false,
+          "detail": "HTTP 200 stored/sanitized"
+        },
+        {
+          "test": "XSS in username: Basic script tag",
+          "vulnerable": true,
+          "detail": "Stored username: '<script>alert('XSS')</script>'"
+        },
+        {
+          "test": "XSS in username: Cookie steal script",
+          "vulnerable": true,
+          "detail": "Stored username: '<script>alert(document.cookie)</'"
+        },
+        {
+          "test": "XSS in username: Image onerror handler",
+          "vulnerable": true,
+          "detail": "Stored username: '<img src=x onerror=alert('XSS')>'"
+        },
+        {
+          "test": "Reflected XSS: Basic script tag",
+          "vulnerable": false,
+          "detail": "Not reflected"
+        },
+        {
+          "test": "Reflected XSS: Cookie steal script",
+          "vulnerable": false,
+          "detail": "Not reflected"
+        },
+        {
+          "test": "Reflected XSS: Image onerror handler",
+          "vulnerable": false,
+          "detail": "Not reflected"
+        },
+        {
+          "test": "Header: Content-Security-Policy",
+          "vulnerable": true,
+          "detail": "Missing CSP header"
+        },
+        {
+          "test": "Header: X-Content-Type-Options",
+          "vulnerable": true,
+          "detail": "Missing nosniff header"
+        },
+        {
+          "test": "Header: X-Frame-Options (Clickjacking)",
+          "vulnerable": true,
+          "detail": "Missing X-Frame-Options"
+        }
+      ]
+    },
+    "04 · Auth Bypass & Privilege Escalation": {
+      "total": 24,
+      "vulnerable": 8,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "H2 console at /h2-console",
+          "vulnerable": false,
+          "detail": "HTTP 404 - not accessible"
+        },
+        {
+          "test": "H2 console at /h2-console/",
+          "vulnerable": false,
+          "detail": "HTTP 404 - not accessible"
+        },
+        {
+          "test": "H2 console at /h2-console/login.jsp",
+          "vulnerable": false,
+          "detail": "HTTP 404 - not accessible"
+        },
+        {
+          "test": "H2 console at /console",
+          "vulnerable": false,
+          "detail": "HTTP 404 - not accessible"
+        },
+        {
+          "test": "H2 console at /actuator/h2-console",
+          "vulnerable": false,
+          "detail": "HTTP 404 - not accessible"
+        },
+        {
+          "test": "GET /api/leaderboard without auth",
+          "vulnerable": true,
+          "detail": "HTTP 404 - accessible without auth!"
+        },
+        {
+          "test": "GET /api/chat/history/public without auth",
+          "vulnerable": true,
+          "detail": "HTTP 200 - accessible without auth!"
+        },
+        {
+          "test": "GET /api/stories without auth",
+          "vulnerable": true,
+          "detail": "HTTP 405 - accessible without auth!"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus without auth",
+          "vulnerable": true,
+          "detail": "HTTP 200 - accessible without auth!"
+        },
+        {
+          "test": "POST /api/chat/send without auth",
+          "vulnerable": true,
+          "detail": "HTTP 404 - accessible without auth!"
+        },
+        {
+          "test": "Guest awarding self 99999 XP via /api/leaderboard/bonus",
+          "vulnerable": true,
+          "detail": "HTTP 200 - XP awarded with NO auth check!"
+        },
+        {
+          "test": "Guest creating a story (should require auth)",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "REST chat: spoofed sender field",
+          "vulnerable": false,
+          "detail": "HTTP 404 - blocked"
+        },
+        {
+          "test": "Register with extra field: role",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected in response: False"
+        },
+        {
+          "test": "Register with extra field: isAdmin",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected in response: False"
+        },
+        {
+          "test": "Register with extra field: score",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected in response: False"
+        },
+        {
+          "test": "Register with extra field: guest",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected in response: True"
+        },
+        {
+          "test": "Forged Bearer token on GET /api/leaderboard/bonus",
+          "vulnerable": false,
+          "detail": "HTTP 405 - rejected"
+        },
+        {
+          "test": "Forged Bearer token on GET /api/stories",
+          "vulnerable": false,
+          "detail": "HTTP 405 - rejected"
+        },
+        {
+          "test": "Forged Bearer token on GET /api/chat/history/public",
+          "vulnerable": true,
+          "detail": "HTTP 200 - accepted fake JWT!"
+        },
+        {
+          "test": "Password change at /api/auth/change-password without old-password auth",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Password change at /api/auth/update without old-password auth",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Password change at /api/user/update without old-password auth",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Password change at /api/profile/update without old-password auth",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        }
+      ]
+    },
+    "05 · Rate Limiting & DoS Resistance": {
+      "total": 8,
+      "vulnerable": 3,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "Login flood: 50 concurrent requests",
+          "vulnerable": true,
+          "detail": "OK/401=50  429=0  err=0  time=5.17s"
+        },
+        {
+          "test": "Register flood: 30 concurrent registrations",
+          "vulnerable": false,
+          "detail": "Created=0  Blocked(429)=0  time=3.05s"
+        },
+        {
+          "test": "Chat flood: 40 concurrent messages",
+          "vulnerable": false,
+          "detail": "Accepted=0/40  time=3.87s"
+        },
+        {
+          "test": "Story flood: 20 stories created",
+          "vulnerable": true,
+          "detail": "Accepted=20/20"
+        },
+        {
+          "test": "Oversized payload (100KB) accepted",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Oversized payload (500KB) accepted",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Oversized payload (1000KB) accepted",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Connection exhaustion: opened 25 slow connections",
+          "vulnerable": true,
+          "detail": "Server accepted 25 incomplete HTTP requests"
+        }
+      ]
+    },
+    "06 · Mass Assignment & XP Manipulation": {
+      "total": 20,
+      "vulnerable": 8,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "POST /api/leaderboard/bonus points=999999",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=-999999",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=0",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=9999999999",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=2147483647",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=2147483648",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "POST /api/leaderboard/bonus points=1.5",
+          "vulnerable": true,
+          "detail": "HTTP 200"
+        },
+        {
+          "test": "Register PrivUser1 with fields: ['score', 'level', 'isAdmin']",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected fields reflected: False"
+        },
+        {
+          "test": "Register PrivUser2 with fields: ['role', 'permissions']",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected fields reflected: False"
+        },
+        {
+          "test": "Register PrivUser3 with fields: ['rank', 'badge']",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected fields reflected: False"
+        },
+        {
+          "test": "Register PrivUser4 with fields: ['xp', 'prestige']",
+          "vulnerable": false,
+          "detail": "HTTP 400 - injected fields reflected: False"
+        },
+        {
+          "test": "Direct score update at POST /api/user/update",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Direct score update at POST /api/leaderboard/update",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Direct score update at POST /api/profile/score",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "PUT /api/user/TestUser123 score=999999",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "PUT /api/leaderboard/TestUser123 score=999999",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "Story creation with injected fields: ['id', 'viewCount']",
+          "vulnerable": true,
+          "detail": "HTTP 200 - fields reflected: True"
+        },
+        {
+          "test": "Story creation with injected fields: ['createdAt', 'expiresAt']",
+          "vulnerable": false,
+          "detail": "HTTP 200 - fields reflected: False"
+        },
+        {
+          "test": "Story creation with injected fields: ['hidden', 'featured']",
+          "vulnerable": false,
+          "detail": "HTTP 200 - fields reflected: False"
+        },
+        {
+          "test": "XP overflow check",
+          "vulnerable": false,
+          "detail": "'str' object has no attribute 'get'"
+        }
+      ]
+    },
+    "07 · IDOR (Insecure Direct Object Ref)": {
+      "total": 13,
+      "vulnerable": 1,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "User B views User A story by ID (GET /api/stories/32)",
+          "vulnerable": false,
+          "detail": "HTTP 404 - content exposed: 103 bytes"
+        },
+        {
+          "test": "Story ID enumeration (IDs 1-19): 0 accessible",
+          "vulnerable": false,
+          "detail": "0 stories retrievable by guessing sequential IDs"
+        },
+        {
+          "test": "Story view IDOR",
+          "vulnerable": false,
+          "detail": "No stories available to test"
+        },
+        {
+          "test": "DELETE /api/stories/33 as non-owner",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "DELETE /api/stories/33/delete as non-owner",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "GET /api/leaderboard/user/1 (unauthenticated user data access)",
+          "vulnerable": false,
+          "detail": "HTTP 404 - 0 bytes"
+        },
+        {
+          "test": "GET /api/user/1 (unauthenticated user data access)",
+          "vulnerable": false,
+          "detail": "HTTP 404 - 99 bytes"
+        },
+        {
+          "test": "GET /api/user/TestUser123 (unauthenticated user data access)",
+          "vulnerable": false,
+          "detail": "HTTP 404 - 109 bytes"
+        },
+        {
+          "test": "GET /api/leaderboard/user/TestUser123 (unauthenticated user data access)",
+          "vulnerable": true,
+          "detail": "HTTP 200 - 268 bytes"
+        },
+        {
+          "test": "GET /api/messages/private/TestUser123 (unauthenticated DM access)",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "GET /api/chat/private/TestUser123 (unauthenticated DM access)",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "GET /api/messages/1 (unauthenticated DM access)",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        },
+        {
+          "test": "GET /api/chat/dm/TestUser123 (unauthenticated DM access)",
+          "vulnerable": false,
+          "detail": "HTTP 404"
+        }
+      ]
+    },
+    "08 · TCP Server Abuse": {
+      "total": 1,
+      "vulnerable": 0,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "TCP Server reachability on public host",
+          "vulnerable": false,
+          "detail": "Port 8888 not open or routed on 127.0.0.1 (expected on web-only cloud platforms)"
+        }
+      ]
+    },
+    "09 · WebSocket & STOMP Security": {
+      "total": 17,
+      "vulnerable": 7,
+      "errors": 0,
+      "findings": [
+        {
+          "test": "WebSocket unauthenticated connect",
+          "vulnerable": false,
+          "detail": "Connection refused: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:30 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690913c51bc9a-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "STOMP sender spoof",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:31 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c69096ae474b61-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Private queue snoop TestUser123",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:32 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c6909bf9744457-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Private queue snoop CyberNinja",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:33 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690a17b1aa6dc-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Private queue snoop admin",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:34 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690a76f4497a9-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Private queue snoop Mariappan",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:35 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690acd9ea4457-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:35 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690b2adcbb1e7-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:36 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690b87be6ffa2-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:37 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690be3fe432a3-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:38 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690c46a4eff6f-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:39 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690ca1d9dff9e-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:40 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690cf8df346b0-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Malformed STOMP frame",
+          "vulnerable": true,
+          "detail": "Server errored: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:41 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690d51b60ff69-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "WS content injection",
+          "vulnerable": false,
+          "detail": "Error: Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:42 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690daf922d4bc-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Topic hijack /topic/public",
+          "vulnerable": false,
+          "detail": "Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:43 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690e09c0c80c4-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Topic hijack /topic/leaderboard",
+          "vulnerable": false,
+          "detail": "Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:44 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690e62a8c0c04-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        },
+        {
+          "test": "Topic hijack /topic/system",
+          "vulnerable": false,
+          "detail": "Handshake status 400 Bad Request -+-+- {'date': 'Sun, 18 Oct 2026 09:37:45 GMT', 'content-length': '0', 'connection': 'keep-alive', 'vary': 'Access-Control-Request-Headers', 'cf-cache-status': 'DYNAMIC', 'server': 'cloudflare', 'cf-ray': 'a4c690ec0e940d75-BOM', 'alt-svc': 'h3=\":443\"; ma=86400'} -+-+- None"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 122,
+    "total_vulnerable": 38,
+    "total_passed": 84,
+    "total_errors": 0,
+    "risk_level": "HIGH RISK"
+  }
+}

@@ -1,6 +1,8 @@
-# Real-Time TCP Chat Client for Windows PowerShell
-$hostName = "127.0.0.1"
-$port = 8888
+param(
+    [string]$hostName = "127.0.0.1",
+    [int]$port = 8888
+)
+$hostName = $hostName.Replace("https://", "").Replace("http://", "").Split("/")[0].Split(":")[0]
 
 Write-Host "Connecting to TCP Chat Server at ${hostName}:${port}..." -ForegroundColor Cyan
 

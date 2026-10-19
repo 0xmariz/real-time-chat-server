@@ -1,11 +1,16 @@
-﻿import json
+import json
 import time
 import threading
 from colorama import Fore, Style, init
 
 init(autoreset=True)
-BASE_WS = "ws://localhost:8090/ws"
-BASE_HTTP = "http://localhost:8090"
+try:
+    from config import TARGET_WS, TARGET_HTTP
+except ImportError:
+    from .config import TARGET_WS, TARGET_HTTP
+
+BASE_WS = TARGET_WS
+BASE_HTTP = TARGET_HTTP
 RESULTS = []
 lock = threading.Lock()
 

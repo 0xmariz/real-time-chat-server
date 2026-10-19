@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Nexus Arena Security Report — 20261018_143333</title>
+<style>
+:root{--bg:#080b14;--panel:#111827;--border:#26334a;--text:#e5edf8;--muted:#8b9bb4;--red:#ff5574;--green:#00dfa0;--yellow:#ffc857;--blue:#53c8ff;--purple:#b9a0ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#121b31 0%,var(--bg) 55%);color:var(--text);font:14px/1.55 Inter,Segoe UI,Arial,sans-serif}
+main{max-width:1200px;margin:auto;padding:28px 20px 60px}
+.hero{text-align:center;padding:38px 0 26px}
+.kicker{display:inline-block;padding:5px 12px;border:1px solid #7b3548;border-radius:99px;color:#ff8ba1;background:#ff557411;font-size:11px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase}
+h1{font-size:clamp(28px,5vw,48px);line-height:1.1;margin:17px 0 10px;letter-spacing:-1.5px}
+.subtitle{color:var(--muted)}
+.meta{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
+.meta span{background:#121c2d;border:1px solid var(--border);padding:7px 11px;border-radius:9px;color:var(--muted);overflow-wrap:anywhere}
+.meta strong{color:var(--blue);font-weight:600}
+.risk{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;margin:22px 0;padding:26px;border:1px solid var(--border);border-radius:18px;background:#111827cc}
+.risk h2{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin:0 0 6px}
+.risk-label{font-size:clamp(28px,4vw,42px);font-weight:900;letter-spacing:-1px}
+.risk-label.high{color:var(--red)}.risk-label.medium{color:var(--yellow)}.risk-label.clean{color:var(--green)}
+.risk-count{color:var(--muted);font-family:Consolas,monospace}
+.gauge{flex:1;min-width:200px;max-width:430px}
+.gauge-label{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:8px}
+.track{height:10px;background:#263247;border-radius:20px;overflow:hidden}
+.fill{height:100%;width:8%;background:linear-gradient(90deg,var(--yellow),var(--red));border-radius:20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:13px;margin:20px 0 34px}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:20px}
+.stat-num{font:800 34px/1.2 Consolas,monospace}
+.stat-label{font-size:11px;color:var(--muted);letter-spacing:1.3px;text-transform:uppercase;margin-top:7px}
+.red{color:var(--red)}.green{color:var(--green)}.blue{color:var(--blue)}.purple{color:var(--purple)}.yellow{color:var(--yellow)}
+.section-title{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin:32px 0 14px}
+.section-title:after{content:"";height:1px;flex:1;background:var(--border)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filter{border:1px solid var(--border);border-radius:99px;background:#111827;color:var(--muted);padding:8px 14px;cursor:pointer;font-weight:700}
+.filter.active,.filter:hover{border-color:var(--blue);color:var(--blue)}
+.suite{border:1px solid var(--border);background:#111827cc;border-radius:14px;margin:11px 0;overflow:hidden}
+.suite.has-vulns{border-color:#793044}.suite.has-errors{border-color:#80652c}
+.suite-header{display:flex;align-items:center;gap:13px;width:100%;text-align:left;padding:17px;background:transparent;color:inherit;border:0;cursor:pointer}
+.suite-header:hover{background:#ffffff05}
+.suite-number{display:grid;place-items:center;width:39px;height:39px;flex-shrink:0;border-radius:10px;background:#1b2a40;color:var(--blue);font-weight:900}
+.suite-heading{display:flex;flex-direction:column;flex:1;min-width:0}
+.suite-name{font-weight:750;overflow-wrap:anywhere}
+.suite-count{color:var(--muted);font-size:12px}
+.suite-metrics{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;white-space:nowrap}
+.suite-vuln{color:var(--red);font-weight:800}
+.mini-track{width:65px;height:5px;background:#29354a;border-radius:8px;overflow:hidden}
+.mini-track span{display:block;height:100%;background:var(--red)}
+.chevron{font-size:20px;transition:transform .2s}
+.suite.open .chevron{transform:rotate(180deg)}
+.suite-body{display:none;border-top:1px solid var(--border);padding:0 16px 16px}
+.suite.open .suite-body{display:block}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:8px;text-align:left;font-size:13px}
+th{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted)}
+th,td{padding:11px 10px;border-bottom:1px solid #26334a;vertical-align:top}
+tr:last-child td{border-bottom:0}tbody tr:hover{background:#ffffff05}
+.test-name{font-family:Consolas,monospace;min-width:220px;overflow-wrap:anywhere}
+.detail{color:#a9b7cc;overflow-wrap:anywhere;min-width:220px;white-space:pre-wrap}
+.pill{display:inline-block;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:900;letter-spacing:.5px;white-space:nowrap}
+.pill.vuln{color:var(--red);background:#ff55741a;border:1px solid #ff55744d}
+.pill.safe{color:var(--green);background:#00dfa014;border:1px solid #00dfa044}
+.pill.error{color:var(--yellow);background:#ffc85714;border:1px solid #ffc85755}
+.empty{color:var(--muted);text-align:center;padding:20px}
+.note{border:1px solid #80652c;background:#ffc8570d;color:#d9c99f;border-radius:12px;padding:13px 16px;margin:20px 0}
+footer{border-top:1px solid var(--border);text-align:center;color:var(--muted);padding:24px 0;margin-top:36px;font-size:12px}
+@media(max-width:700px){main{padding:12px 12px 40px}.suite-header{padding:12px;gap:9px}.suite-metrics{gap:5px;white-space:normal;justify-content:flex-end}.mini-track{display:none}.suite-vuln{max-width:90px;text-align:right}.risk{padding:19px}th,td{padding:9px 7px}}
+@media print{body{background:white;color:#111}main{max-width:none;padding:0}.suite,.stat,.risk{background:white;border-color:#bbb;break-inside:avoid}.filters{display:none}.suite-body{display:block!important}.suite-header{color:#111}.suite-count,.subtitle,.meta span,.detail,.section-title,footer{color:#444}.risk-label,.stat-num,.suite-vuln{color:#111!important}}
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <span class="kicker">⚠ Authorized Security Assessment</span>
+    <h1>Nexus Arena Security Report</h1>
+    <p class="subtitle">Generated automatically from the latest test run</p>
+    <div class="meta">
+      <span>HTTP: <strong>https://real-time-chat-server-n8ml.onrender.com</strong></span>
+      <span>TCP: <strong>real-time-chat-server-n8ml.onrender.com:8888</strong></span>
+      <span>Generated: <strong>2026-10-18T14:54:17+05:30</strong></span>
+      <span>Tool: <strong>Nexus Arena Security Test Suite v1.0</strong></span>
+    </div>
+  </header>
+
+  <section class="risk">
+    <div>
+      <h2>Overall risk level</h2>
+      <div class="risk-label high">HIGH RISK</div>
+      <div class="risk-count">8 vulnerable / 100 tests</div>
+    </div>
+    <div class="gauge">
+      <div class="gauge-label"><span>0% vulnerable</span><span>8% vulnerable</span><span>100%</span></div>
+      <div class="track"><div class="fill"></div></div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><div class="stat-num red">8</div><div class="stat-label">Vulnerable findings</div></div>
+    <div class="stat"><div class="stat-num green">89</div><div class="stat-label">Passed tests</div></div>
+    <div class="stat"><div class="stat-num blue">100</div><div class="stat-label">Total test results</div></div>
+    <div class="stat"><div class="stat-num yellow">3</div><div class="stat-label">Runner errors</div></div>
+    <div class="stat"><div class="stat-num purple">9</div><div class="stat-label">Test suites</div></div>
+  </section>
+
+  <div class="note"><strong>Interpretation note:</strong> A test-runner error is counted separately and is not treated as a passing security test. An HTTP status code alone does not always prove a vulnerability; review the detail and validate findings against expected application behavior.</div>
+
+  <div class="section-title">Test suite results</div>
+  <div class="filters" role="group" aria-label="Filter test suites">
+    <button class="filter active" data-filter="all">All suites</button>
+    <button class="filter" data-filter="vuln">Vulnerable only</button>
+    <button class="filter" data-filter="safe">No reported vulnerabilities</button>
+    <button class="filter" data-filter="error">Runner errors</button>
+  </div>
+  <div id="suites">
+    
+        <section class="suite has-errors" data-vuln="0"
+                 data-errors="1">
+          <button class="suite-header" type="button" aria-expanded="false">
+            <span class="suite-number">01</span>
+            <span class="suite-heading">
+              <span class="suite-name">01 · Brute Force &amp; Credential Attacks</span>
+              <span class="suite-count">1 tests · 1 errors</span>
+            </span>
+            <span class="suite-metrics">
+              <span class="suite-vuln">0 / 1 vulnerable</span>
+              <span class="mini-track"><span style="width:0%"></span></span>
+              <span class="chevron">⌄</span>
+            </span>
+          </button>
+          <div class="suite-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Status</th><th>Test</th><th>Details</th></tr></thead>
+                <tbody><tr class="error-row" data-status="error"><td><span class="pill error">ERROR</span></td><td class="test-name">Module load/run failed: 01_bruteforce.py</td><td class="detail">TypeError: cannot unpack non-iterable type object</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section class="suite has-errors" data-vuln="0"
+                 data-errors="1">
+          <button class="suite-header" type="button" aria-expanded="false">
+            <span class="suite-number">02</span>
+            <span class="suite-heading">
+              <span class="suite-name">02 · SQL Injection</span>
+              <span class="suite-count">1 tests · 1 errors</span>
+            </span>
+            <span class="suite-metrics">
+              <span class="suite-vuln">0 / 1 vulnerable</span>
+              <span class="mini-track"><span style="width:0%"></span></span>
+              <span class="chevron">⌄</span>
+            </span>
+          </button>
+          <div class="suite-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Status</th><th>Test</th><th>Details</th></tr></thead>
+                <tbody><tr class="error-row" data-status="error"><td><span class="pill error">ERROR</span></td><td class="test-name">Module load/run failed: 02_sqli.py</td><td class="detail">ConnectionError: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section class="suite has-errors" data-vuln="0"
+                 data-errors="1">
+          <button class="suite-header" type="button" aria-expanded="false">
+            <span class="suite-number">03</span>
+            <span class="suite-heading">
+              <span class="suite-name">03 · Cross-Site Scripting (XSS)</span>
+              <span class="suite-count">1 tests · 1 errors</span>
+            </span>
+            <span class="suite-metrics">
+              <span class="suite-vuln">0 / 1 vulnerable</span>
+              <span class="mini-track"><span style="width:0%"></span></span>
+              <span class="chevron">⌄</span>
+            </span>
+          </button>
+          <div class="suite-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Status</th><th>Test</th><th>Details</th></tr></thead>
+                <tbody><tr class="error-row" data-status="error"><td><span class="pill error">ERROR</span></td><td class="test-name">Module load/run failed: 03_xss.py</td><td class="detail">ConnectionError: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section class="suite all-safe" data-vuln="0"
+                 data-errors="0">
+          <button class="suite-header" type="button" aria-expanded="false">
+            <span class="suite-number">04</span>
+            <span class="suite-heading">
+              <span class="suite-name">04 · Auth Bypass &amp; Privilege Escalation</span>
+              <span class="suite-count">23 tests · 0 errors</span>
+            </span>
+            <span class="suite-metrics">
+              <span class="suite-vuln">0 / 23 vulnerable</span>
+              <span class="mini-track"><span style="width:0%"></span></span>
+              <span class="chevron">⌄</span>
+            </span>
+          </button>
+          <div class="suite-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Status</th><th>Test</th><th>Details</th></tr></thead>
+                <tbody><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">H2 console at /h2-console</td><td class="detail">Connection error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /h2-console (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">H2 console at /h2-console/</td><td class="detail">Connection error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /h2-console/ (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">H2 console at /h2-console/login.jsp</td><td class="detail">Connection error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /h2-console/login.jsp (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">H2 console at /console</td><td class="detail">Connection error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /console (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">H2 console at /actuator/h2-console</td><td class="detail">Connection error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /actuator/h2-console (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/leaderboard</td><td class="detail">Error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/chat/history/public</td><td class="detail">Error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/chat/history/public (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/stories</td><td class="detail">Error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">POST /api/leaderboard/bonus</td><td class="detail">Error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">POST /api/chat/send</td><td class="detail">Error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Guest login setup</td><td class="detail">Could not create guest - skipping</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Sender spoofing REST</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Register mass assign</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Register mass assign</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Register mass assign</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Register mass assign</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Forged token /api/leaderboard/bonus</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Forged token /api/stories</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Forged token /api/chat/history/public</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/chat/history/public (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Account takeover /api/auth/change-password</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/change-password (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Account takeover /api/auth/update</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/update (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Account takeover /api/user/update</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/user/update (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Account takeover /api/profile/update</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/profile/update (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section class="suite all-safe" data-vuln="0"
+                 data-errors="0">
+          <button class="suite-header" type="button" aria-expanded="false">
+            <span class="suite-number">05</span>
+            <span class="suite-heading">
+              <span class="suite-name">05 · Rate Limiting &amp; DoS Resistance</span>
+              <span class="suite-count">8 tests · 0 errors</span>
+            </span>
+            <span class="suite-metrics">
+              <span class="suite-vuln">0 / 8 vulnerable</span>
+              <span class="mini-track"><span style="width:0%"></span></span>
+              <span class="chevron">⌄</span>
+            </span>
+          </button>
+          <div class="suite-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Status</th><th>Test</th><th>Details</th></tr></thead>
+                <tbody><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Login flood: 50 concurrent requests</td><td class="detail">OK/401=0  429=0  err=50  time=4.19s</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Register flood: 30 concurrent registrations</td><td class="detail">Created=0  Blocked(429)=0  time=4.14s</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Chat flood: 40 concurrent messages</td><td class="detail">Accepted=0/40  time=4.15s</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Story flood: 20 stories created</td><td class="detail">Accepted=0/20</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Oversized payload (100KB)</td><td class="detail">Rejected/error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Oversized payload (500KB)</td><td class="detail">Rejected/error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Oversized payload (1000KB)</td><td class="detail">Rejected/error: HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/chat/send (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Connection exhaustion: opened 0 slow connections</td><td class="detail">Server accepted 0 incomplete HTTP requests</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section class="suite all-safe" data-vuln="0"
+                 data-errors="0">
+          <button class="suite-header" type="button" aria-expanded="false">
+            <span class="suite-number">06</span>
+            <span class="suite-heading">
+              <span class="suite-name">06 · Mass Assignment &amp; XP Manipulation</span>
+              <span class="suite-count">20 tests · 0 errors</span>
+            </span>
+            <span class="suite-metrics">
+              <span class="suite-vuln">0 / 20 vulnerable</span>
+              <span class="mini-track"><span style="width:0%"></span></span>
+              <span class="chevron">⌄</span>
+            </span>
+          </button>
+          <div class="suite-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Status</th><th>Test</th><th>Details</th></tr></thead>
+                <tbody><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">XP inflation points=999999</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">XP inflation points=-999999</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">XP inflation points=0</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">XP inflation points=9999999999</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">XP inflation points=2147483647</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">XP inflation points=2147483648</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">XP inflation points=1.5</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/bonus (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Register privilege injection</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Register privilege injection</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Register privilege injection</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Register privilege injection</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/auth/register (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Score update /api/user/update</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/user/update (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Score update /api/leaderboard/update</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/update (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Score update /api/profile/score</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/profile/score (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">PUT score update /api/user/TestUser123</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/user/TestUser123 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">PUT score update /api/leaderboard/TestUser123</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/TestUser123 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Story metadata injection</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Story metadata injection</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Story metadata injection</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">XP overflow check</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section class="suite all-safe" data-vuln="0"
+                 data-errors="0">
+          <button class="suite-header" type="button" aria-expanded="false">
+            <span class="suite-number">07</span>
+            <span class="suite-heading">
+              <span class="suite-name">07 · IDOR (Insecure Direct Object Ref)</span>
+              <span class="suite-count">12 tests · 0 errors</span>
+            </span>
+            <span class="suite-metrics">
+              <span class="suite-vuln">0 / 12 vulnerable</span>
+              <span class="mini-track"><span style="width:0%"></span></span>
+              <span class="chevron">⌄</span>
+            </span>
+          </button>
+          <div class="suite-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Status</th><th>Test</th><th>Details</th></tr></thead>
+                <tbody><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Story creation for IDOR test</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/stories (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Story view IDOR</td><td class="detail">No stories available to test</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">DELETE /api/stories/1</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/stories/1 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">DELETE /api/stories/1/delete</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/stories/1/delete (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/leaderboard/user/1</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/user/1 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/user/1</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/user/1 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/user/TestUser123</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/user/TestUser123 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/leaderboard/user/TestUser123</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/leaderboard/user/TestUser123 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/messages/private/TestUser123</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/messages/private/TestUser123 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/chat/private/TestUser123</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/chat/private/TestUser123 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/messages/1</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/messages/1 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">GET /api/chat/dm/TestUser123</td><td class="detail">HTTPConnectionPool(host=&#x27;localhost&#x27;, port=8090): Max retries exceeded with url: /api/chat/dm/TestUser123 (Caused by NewConnectionError(&quot;HTTPConnection(host=&#x27;localhost&#x27;, port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it&quot;))</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section class="suite has-vulns" data-vuln="1"
+                 data-errors="0">
+          <button class="suite-header" type="button" aria-expanded="false">
+            <span class="suite-number">08</span>
+            <span class="suite-heading">
+              <span class="suite-name">08 · TCP Server Abuse</span>
+              <span class="suite-count">17 tests · 0 errors</span>
+            </span>
+            <span class="suite-metrics">
+              <span class="suite-vuln">1 / 17 vulnerable</span>
+              <span class="mini-track"><span style="width:6%"></span></span>
+              <span class="chevron">⌄</span>
+            </span>
+          </button>
+          <div class="suite-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Status</th><th>Test</th><th>Details</th></tr></thead>
+                <tbody><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">TCP flood: opened 0/50 connections</td><td class="detail">Connected=0  Failed=50</td></tr><tr class="vuln-row" data-status="vuln"><td><span class="pill vuln">VULNERABLE</span></td><td class="test-name">TCP malformed commands</td><td class="detail">Connection failed mid-test: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">TCP /nick &quot;/nick &lt;script&gt;alert(&#x27;xss&#x27;)&lt;/sc&quot;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">TCP /nick &#x27;/nick admin&#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">TCP /nick &quot;/nick &#x27; OR 1=1 --&quot;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">TCP /nick &#x27;/nick ../../../etc/passwd&#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">TCP /nick &#x27;/nick &quot;; cat /etc/passwd #&#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">TCP /nick &#x27;/nick &#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">TCP /nick &#x27;/nick {{7*7}}&#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">TCP commands without nick</td><td class="detail">[WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Binary payload b&#x27;\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00&#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Binary payload b&#x27;\xff\xfe\xff\xfe\xff\xfe\xff\xfe\xff\xfe&#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Binary payload b&#x27;HELLO\x00WORL&#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Binary payload b&#x27;\r\n\r\n\r\n\r\n\r\n&#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Binary payload b&#x27;\x00\x01\x02\x03\x04\x05\x06\x07\x08\t&#x27;</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Whisper non-existent user</td><td class="detail">[WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Duplicate /nick race condition: 0/5 connections claimed &#x27;SameNick&#x27;</td><td class="detail">More than 1 user with same nick is a collision vulnerability</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section class="suite has-vulns" data-vuln="7"
+                 data-errors="0">
+          <button class="suite-header" type="button" aria-expanded="false">
+            <span class="suite-number">09</span>
+            <span class="suite-heading">
+              <span class="suite-name">09 · WebSocket &amp; STOMP Security</span>
+              <span class="suite-count">17 tests · 0 errors</span>
+            </span>
+            <span class="suite-metrics">
+              <span class="suite-vuln">7 / 17 vulnerable</span>
+              <span class="mini-track"><span style="width:41%"></span></span>
+              <span class="chevron">⌄</span>
+            </span>
+          </button>
+          <div class="suite-body">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Status</th><th>Test</th><th>Details</th></tr></thead>
+                <tbody><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">WebSocket unauthenticated connect</td><td class="detail">Connection refused: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">STOMP sender spoof</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Private queue snoop TestUser123</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Private queue snoop CyberNinja</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Private queue snoop admin</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Private queue snoop Mariappan</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="vuln-row" data-status="vuln"><td><span class="pill vuln">VULNERABLE</span></td><td class="test-name">Malformed STOMP frame</td><td class="detail">Server errored: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="vuln-row" data-status="vuln"><td><span class="pill vuln">VULNERABLE</span></td><td class="test-name">Malformed STOMP frame</td><td class="detail">Server errored: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="vuln-row" data-status="vuln"><td><span class="pill vuln">VULNERABLE</span></td><td class="test-name">Malformed STOMP frame</td><td class="detail">Server errored: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="vuln-row" data-status="vuln"><td><span class="pill vuln">VULNERABLE</span></td><td class="test-name">Malformed STOMP frame</td><td class="detail">Server errored: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="vuln-row" data-status="vuln"><td><span class="pill vuln">VULNERABLE</span></td><td class="test-name">Malformed STOMP frame</td><td class="detail">Server errored: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="vuln-row" data-status="vuln"><td><span class="pill vuln">VULNERABLE</span></td><td class="test-name">Malformed STOMP frame</td><td class="detail">Server errored: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="vuln-row" data-status="vuln"><td><span class="pill vuln">VULNERABLE</span></td><td class="test-name">Malformed STOMP frame</td><td class="detail">Server errored: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">WS content injection</td><td class="detail">Error: [WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Topic hijack /topic/public</td><td class="detail">[WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Topic hijack /topic/leaderboard</td><td class="detail">[WinError 10061] No connection could be made because the target machine actively refused it</td></tr><tr class="" data-status="safe"><td><span class="pill safe">PASS</span></td><td class="test-name">Topic hijack /topic/system</td><td class="detail">[WinError 10061] No connection could be made because the target machine actively refused it</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+  </div>
+  <footer>Nexus Arena Security Test Suite v1.0 · Authorized self-testing only · Report ID 20261018_143333</footer>
+</main>
+<script>
+document.querySelectorAll('.suite-header').forEach(function(button) {
+  button.addEventListener('click', function() {
+    const suite = button.closest('.suite');
+    const open = suite.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(open));
+  });
+});
+document.querySelectorAll('.filter').forEach(function(button) {
+  button.addEventListener('click', function() {
+    document.querySelectorAll('.filter').forEach(function(item) { item.classList.remove('active'); });
+    button.classList.add('active');
+    const mode = button.dataset.filter;
+    document.querySelectorAll('.suite').forEach(function(suite) {
+      const vuln = Number(suite.dataset.vuln || 0);
+      const errors = Number(suite.dataset.errors || 0);
+      const show = mode === 'all'
+        || (mode === 'vuln' && vuln > 0)
+        || (mode === 'safe' && vuln === 0 && errors === 0)
+        || (mode === 'error' && errors > 0);
+      suite.hidden = !show;
+    });
+  });
+});
+</script>
+</body>
+</html>

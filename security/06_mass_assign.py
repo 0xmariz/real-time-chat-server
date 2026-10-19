@@ -1,8 +1,13 @@
-﻿import requests
+import requests
 from colorama import Fore, Style, init
 
 init(autoreset=True)
-BASE = "http://localhost:8090"
+try:
+    from config import TARGET_HTTP
+except ImportError:
+    from .config import TARGET_HTTP
+
+BASE = TARGET_HTTP
 RESULTS = []
 
 def log(label, vuln, detail):

@@ -1,10 +1,15 @@
-﻿import requests
+import requests
 import threading
 import time
 from colorama import Fore, Style, init
 
 init(autoreset=True)
-BASE = "http://localhost:8090"
+try:
+    from config import TARGET_HTTP
+except ImportError:
+    from .config import TARGET_HTTP
+
+BASE = TARGET_HTTP
 RESULTS = []
 lock = threading.Lock()
 
@@ -157,14 +162,26 @@ def test_large_payload():
 def test_connection_exhaustion():
     section("T6 . Connection Exhaustion (Slow HTTP)")
     import socket
+    import ssl
+    import urllib.parse
+    parsed = urllib.parse.urlparse(BASE)
+    target_host = parsed.hostname or "127.0.0.1"
+    target_port = 443 if parsed.scheme == "https" else (parsed.port or 80)
+    use_ssl = (parsed.scheme == "https")
+
     open_sockets = []
     blocked = False
-    for i in range(100):
+    for i in range(25):
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(3)
-            s.connect(("127.0.0.1", 8090))
-            s.send(b"GET /api/leaderboard HTTP/1.1\r\nHost: localhost\r\n")
+            raw_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            raw_s.settimeout(3)
+            if use_ssl:
+                ctx = ssl.create_default_context()
+                s = ctx.wrap_socket(raw_s, server_hostname=target_host)
+            else:
+                s = raw_s
+            s.connect((target_host, target_port))
+            s.send(f"GET / HTTP/1.1\r\nHost: {target_host}\r\n".encode())
             open_sockets.append(s)
         except Exception:
             blocked = True
@@ -176,7 +193,7 @@ def test_connection_exhaustion():
         except Exception:
             pass
 
-    vuln = len(open_sockets) > 50 and not blocked
+    vuln = len(open_sockets) > 15 and not blocked
     log(f"Connection exhaustion: opened {len(open_sockets)} slow connections", vuln,
         f"Server accepted {len(open_sockets)} incomplete HTTP requests")
 

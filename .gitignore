@@ -31,3 +31,9 @@ target/
 ### Logs & Backups ###
 *.log
 backups/*.json.gz
+
+### Python ###
+__pycache__/
+*.pyc
+*.pyo
+

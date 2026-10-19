@@ -6,8 +6,12 @@ import socket
 import threading
 import sys
 
-HOST = "127.0.0.1"
-PORT = 8888
+import os
+
+RAW_HOST = sys.argv[1] if len(sys.argv) > 1 else os.getenv("TCP_HOST", "127.0.0.1")
+# Clean URL scheme if passed by accident
+HOST = RAW_HOST.replace("https://", "").replace("http://", "").split("/")[0].split(":")[0]
+PORT = int(sys.argv[2]) if len(sys.argv) > 2 else int(os.getenv("TCP_PORT", "8888"))
 
 def receive_messages(sock):
     while True:

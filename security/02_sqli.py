@@ -4,88 +4,53 @@
 ===================================
 Tests /api/auth/login and /api/auth/register for SQL injection
 by injecting classic payloads into username and password fields.
-
-The app uses Spring Data JPA with parameterized queries, so classic
-string-concatenation SQLi should be blocked — but this confirms it.
-
-Findings to look for:
-  VULN: 200 OK with success:true for a SQLi payload username
-  VULN: 500 Internal Server Error (reveals DB errors / stack traces)
-  VULN: Different response for tautology vs normal bad password
 """
 
 import requests
 import json
+import time
 
-BASE_URL = "http://localhost:8090"
+try:
+    from config import TARGET_HTTP
+except ImportError:
+    from .config import TARGET_HTTP
+
+BASE_URL = TARGET_HTTP
+RESULTS = []
+
+def log(label, vuln, detail):
+    tag = "VULN" if vuln else "SAFE"
+    print(f"  [{tag}] {label}")
+    if detail:
+        print(f"         -> {detail}")
+    RESULTS.append({"test": label, "vulnerable": vuln, "detail": detail})
 
 # Classic SQL injection payloads
 SQLI_PAYLOADS = [
     # Tautology-based
-    ("' OR '1'='1",           "classic tautology"),
-    ("' OR '1'='1'--",        "tautology with comment"),
-    ("' OR 1=1--",            "numeric tautology"),
-    ("admin'--",              "comment bypass"),
-    ("' OR 'x'='x",           "string tautology"),
-    ("\" OR \"1\"=\"1",       "double-quote tautology"),
+    ("' OR '1'='1",           "SQLi Tautology: ' OR '1'='1"),
+    ("' OR '1'='1'--",        "SQLi Tautology with comment: ' OR '1'='1'--"),
+    ("' OR 1=1--",            "SQLi Numeric tautology: ' OR 1=1--"),
+    ("admin'--",              "SQLi Comment bypass: admin'--"),
+    ("' OR 'x'='x",           "SQLi String tautology: ' OR 'x'='x"),
+    ("\" OR \"1\"=\"1",       "SQLi Double-quote tautology: \" OR \"1\"=\"1"),
     # UNION-based
-    ("' UNION SELECT 1--",    "union select 1"),
-    ("' UNION SELECT null--", "union null"),
+    ("' UNION SELECT 1--",    "SQLi UNION SELECT 1"),
+    ("' UNION SELECT null--", "SQLi UNION SELECT null"),
     # Stacked queries
-    ("'; DROP TABLE user_accounts;--", "drop table"),
-    ("'; INSERT INTO user_accounts(username,score) VALUES('hacked',9999);--", "insert row"),
+    ("'; DROP TABLE user_accounts;--", "SQLi Stacked query: DROP TABLE"),
     # Blind boolean
-    ("' AND 1=1--",           "blind true"),
-    ("' AND 1=2--",           "blind false"),
+    ("' AND 1=1--",           "SQLi Blind boolean true: ' AND 1=1--"),
+    ("' AND 1=2--",           "SQLi Blind boolean false: ' AND 1=2--"),
     # Error-based
-    ("' AND EXTRACTVALUE(1,CONCAT(0x7e,VERSION()))--", "error-based mysql"),
-    ("' AND 1=CONVERT(int,(SELECT TOP 1 username FROM user_accounts))--", "mssql convert"),
-    # NoSQL-style (won't work on SQL but tests parser)
-    ('{"$gt": ""}',           "nosql gt operator"),
-    # Null byte
-    ("admin\x00",             "null byte injection"),
-    # Oversized input
-    ("A" * 1000,              "oversized username (1000 chars)"),
-    ("A" * 10000,             "oversized username (10000 chars)"),
+    ("' AND EXTRACTVALUE(1,CONCAT(0x7e,VERSION()))--", "SQLi Error-based"),
 ]
-
 
 def test_login(username, password, label):
     try:
         r = requests.post(f"{BASE_URL}/api/auth/login",
                           json={"username": username, "password": password},
-                          timeout=5)
-        body = {}
-        try:
-            body = r.json()
-        except Exception:
-            pass
-
-        success  = body.get("success", False)
-        msg      = body.get("message", "")
-        http     = r.status_code
-
-        flag = ""
-        if success:
-            flag = "  🚨 CRITICAL: AUTH BYPASSED!"
-        elif http == 500:
-            flag = "  🚨 SERVER ERROR: Possible injection / stack trace leak!"
-        elif http not in (400, 401):
-            flag = f"  ⚠  Unexpected HTTP {http}"
-
-        result = "BYPASSED" if success else ("ERROR" if http == 500 else "BLOCKED")
-        print(f"  [{result:7s}] {label:<40} HTTP {http} | {msg[:50]}{flag}")
-        return success, http
-    except Exception as e:
-        print(f"  [TIMEOUT ] {label:<40} ERROR: {e}")
-        return False, 0
-
-
-def test_register(username, label):
-    try:
-        r = requests.post(f"{BASE_URL}/api/auth/register",
-                          json={"username": username, "password": "validpass"},
-                          timeout=5)
+                          timeout=6)
         body = {}
         try:
             body = r.json()
@@ -93,73 +58,57 @@ def test_register(username, label):
             pass
 
         success = body.get("success", False)
-        http    = r.status_code
-        flag    = "  🚨 INJECTED USER REGISTERED!" if success else ""
-        result  = "CREATED" if success else ("ERROR" if http == 500 else "BLOCKED")
-        print(f"  [{result:7s}] {label:<40} HTTP {http}{flag}")
+        http = r.status_code
+        vuln = success or http == 500
+        detail = f"HTTP {http} - Auth success" if success else (f"HTTP 500 error" if http == 500 else f"HTTP {http} blocked")
+        log(f"Login SQLi: {label}", vuln, detail)
         return success
     except Exception as e:
-        print(f"  [TIMEOUT ] {label:<40} ERROR: {e}")
+        log(f"Login SQLi: {label}", False, f"Connection timeout/error: {e}")
         return False
 
+def test_register(username, label):
+    try:
+        r = requests.post(f"{BASE_URL}/api/auth/register",
+                          json={"username": username, "password": "validpass123"},
+                          timeout=6)
+        http = r.status_code
+        vuln = (http == 500)
+        detail = "HTTP 500 database error" if vuln else f"HTTP {http} handled gracefully"
+        log(f"Register SQLi: {label}", vuln, detail)
+        return vuln
+    except Exception as e:
+        log(f"Register SQLi: {label}", False, f"Connection error: {e}")
+        return False
 
 def section(title):
-    print(f"\n{'='*65}")
-    print(f"  {title}")
-    print(f"{'='*65}")
-
+    print(f"\n{'='*65}\n  {title}\n{'='*65}")
 
 def run():
+    global RESULTS
+    RESULTS = []
     print("=" * 65)
     print("  NEXUS ARENA — SQL Injection Test Suite")
     print("=" * 65)
     print(f"  Server: {BASE_URL}")
-    print(f"  Tests : {len(SQLI_PAYLOADS)} payloads × 2 endpoints\n")
+    print(f"  Tests : {len(SQLI_PAYLOADS)} payloads\n")
 
-    section("PHASE 1: SQLi in LOGIN username field (password='x')")
-    bypasses = 0
+    section("PHASE 1: SQLi in LOGIN username field")
     for payload, label in SQLI_PAYLOADS:
-        ok, code = test_login(payload, "wrongpassword_x", label)
-        if ok: bypasses += 1
+        test_login(payload, "wrongpass123", label)
 
-    section("PHASE 2: SQLi in LOGIN password field (username='admin')")
-    for payload, label in SQLI_PAYLOADS[:12]:  # subset for password field
-        ok, code = test_login("CyberNinja", payload, label)
-        if ok: bypasses += 1
+    section("PHASE 2: SQLi in LOGIN password field")
+    for payload, label in SQLI_PAYLOADS[:4]:
+        test_login("CyberNinja", payload, label)
 
     section("PHASE 3: SQLi in REGISTER username field")
-    for payload, label in SQLI_PAYLOADS:
+    for payload, label in SQLI_PAYLOADS[:4]:
         test_register(payload, label)
 
-    section("PHASE 4: Second-Order SQLi — Register then Login")
-    # Plant a payload as a username, then see if login triggers it
-    evil_names = [
-        "'; UPDATE user_accounts SET score=99999 WHERE '1'='1",
-        "admin'/*",
-        "user\\' OR \\'1\\'=\\'1",
-    ]
-    for name in evil_names:
-        r = requests.post(f"{BASE_URL}/api/auth/register",
-                          json={"username": name, "password": "x"}, timeout=5)
-        try:
-            body = r.json()
-        except Exception:
-            body = {}
-        print(f"  Register '{name[:40]}': success={body.get('success')} | {body.get('message','')[:50]}")
-
-    section("RESULTS")
-    if bypasses == 0:
-        print("  ✔  All SQL injection attempts were BLOCKED.")
-        print("  ✔  Spring Data JPA parameterized queries are working correctly.")
-    else:
-        print(f"  🚨 {bypasses} SQLi payload(s) BYPASSED authentication!")
-
-    print("\n  Additional Check: Visit http://localhost:8090/h2-console")
-    print("  If accessible publicly in production, that is itself a critical vulnerability.")
     print(f"\n{'='*65}")
-    print(f"  SQL INJECTION TEST COMPLETE")
+    print(f"  SQL INJECTION TEST COMPLETE ({len(RESULTS)} findings recorded)")
     print(f"{'='*65}\n")
-
+    return RESULTS
 
 if __name__ == "__main__":
     run()

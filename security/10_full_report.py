@@ -29,8 +29,12 @@ TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 REPORT_FILE = os.path.join(REPORT_DIR, f"report_{TIMESTAMP}.json")
 HTML_REPORT_FILE = os.path.join(REPORT_DIR, f"report_{TIMESTAMP}.html")
 
-TARGET_HTTP = "http://localhost:8090"
-TARGET_TCP = "localhost:8888"
+try:
+    from config import TARGET_HTTP, TARGET_TCP_HOST, TARGET_TCP_PORT
+except ImportError:
+    from .config import TARGET_HTTP, TARGET_TCP_HOST, TARGET_TCP_PORT
+
+TARGET_TCP = f"{TARGET_TCP_HOST}:{TARGET_TCP_PORT}"
 TOOL_NAME = "Nexus Arena Security Test Suite v1.0"
 
 SUITES = [
